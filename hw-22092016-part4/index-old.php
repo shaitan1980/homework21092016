@@ -7,11 +7,27 @@
 		$fo = fopen("stat.txt", "w"); //если такого файла нет, создать пустой, иначе на экран идет вывод ошибок
 		fclose ($fo);
 	} 
+		
+	if(file_exists("ip.txt")) {
+		$fo = fopen("ip.txt", "r");
+		flock($fo, LOCK_SH);
+		$data = fread ($fo, filesize("ip.txt"));
+		flock($fo, LOCK_UN);
+		fclose ($fo);
+	}	else {
+		$fo = fopen("ip.txt", "w"); //если такого файла нет, создать пустой, иначе на экран идет вывод ошибок
+		fclose ($fo);
+	}
 	
-	$stat = 'stat.txt';
-	$new_stat = $ip . "|" . date('d.m.o') . "\r\n";
-	file_put_contents($stat, $new_stat, FILE_APPEND | LOCK_EX);
-	
+	if(!stristr($data,$ip)) {
+		$file="ip.txt";
+		$new_rec = $ip . "\r\n";
+		file_put_contents($file, $new_rec, FILE_APPEND | LOCK_EX);
+
+		$stat = 'stat.txt';
+		$new_stat = $ip . "|" . date('d.m.o') . "\r\n";
+		file_put_contents($stat, $new_stat, FILE_APPEND | LOCK_EX);
+	}
 
 	
 	function getWeekStat($ip) {
@@ -23,6 +39,7 @@
 		    	$current = strtotime($string[1]);
 		    	if($current <= time() && $current >= time()-60*60*24*7) {
 		    		$count_w++;
+		    	//echo "<p>" . "ip: " . $string[0] . " " . "дата: " . $string[1] . "</p>";
 		    }
 
 		    }
@@ -30,20 +47,14 @@
 		echo 'За неделю Вы посещяли эту страницу: ' . $count_w . ' раз';
 	}
 
-	function getTodayStat($ip) {
-		$coutn_d = 0;
+	function getTodayStat() {
 		$lines = file('stat.txt', FILE_IGNORE_NEW_LINES);
 		foreach ($lines as $line) {
 		    $string = explode("|", $line);
-		    if($string[0] == $ip) {
-		    		$current = strtotime($string[1]);
-		    		if($current <= time() && $current >= time()-60*60*24) {
-		    		$count_d++;
-		    	}
+		    if($string[1] == date('d.m.o')) {
+		    	echo "<p>" . "ip: " . $string[0] . " " . "дата: " . $string[1] . "</p>";
 		    }
 		}
-
-		echo 'Сегодня Вы посещяли эту страницу: ' . $count_d . ' раз';
 	}
 
 ?>
@@ -62,7 +73,7 @@
 			<div class="col-md-6">
 				<h4>Статистика посещений за сегодня</h4>
 				<strong><p>Сегодня: <?= date('d.m.o'); ?></p></strong>
-				<?= getTodayStat($ip); ?>
+				<?= getTodayStat(); ?>
 			</div>
 			<div class="col-md-6">
 				<h4>Статистика посещений за неделю</h4>
@@ -73,3 +84,4 @@
 	</div>
 </body>
 </html>
+

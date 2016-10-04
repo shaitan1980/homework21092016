@@ -19,7 +19,7 @@ require_once 'functions.php';
 				
 				<h3>Форма ввода: </h3>
 
-				<form action="/index.php" method="POST">
+				<form action="index.php" method="POST">
 				  <div class="form-group">
 				    <label for="name">Введите Ваше имя</label>
 				    <input name="name" type="name" class="form-control" id="name" placeholder="Имя">

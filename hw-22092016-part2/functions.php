@@ -4,7 +4,7 @@ setUsernameInCookie();
 
 function setUserNameInSession() {
 	
-	if($_POST['name']) {
+	if(isset($_POST['name'])) {
 		$_SESSION['username'] = $_POST['name'];
 	}
 
@@ -12,7 +12,7 @@ function setUserNameInSession() {
 
 
 function setUsernameInCookie() {
-	if($_POST['name']) {
+	if(isset($_POST['name'])) {
 		if(isset($_COOKIE['userNameCook'])){
 			setcookie("userNameCook", $_POST['name'], time()-3600);
 		}
